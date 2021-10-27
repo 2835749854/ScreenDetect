@@ -1,0 +1,142 @@
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.awt.Color;
+import javax.imageio.ImageIO;
+class GenerateTestPic 
+{
+	//批量产生灰度图
+	void batchGrayPic(int width,int height,String path)
+	{
+		for(int i = 0;i<256;i++)
+		{
+			BufferedImage bi = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
+			bi = paintTraverse(i,i,i,bi);
+			
+			String pname = "gray_"+i+"jpg";
+			writePic(bi,path,pname);
+		}
+	}
+
+
+    
+	//根据RGB进行绘制图片
+	BufferedImage paintTraverse(int r,int g,int b,BufferedImage bi)
+	{
+		int width = bi.getWidth(),height = bi.getHeight();
+		Color rgb = new Color(r,g,b);
+		for(int i = 0;i<width;i++)
+		{
+			for(int j = 0;j<height;j++)
+			{
+				bi.setRGB(i,j,rgb.getRGB());
+			}
+		}
+
+
+		return bi;
+	}
+
+
+
+    //根据输出路径和特殊标签输出绘画好的图片
+	void writePic(BufferedImage bi,String path,String pname)
+	{
+		try
+		{
+			String obj = path+pname;
+			ImageIO.write(bi,"JPG",new File(obj));//输出二值化后的图片
+		}
+		catch (IOException ioe)
+		{
+			ioe.printStackTrace();
+		}
+		
+	}
+
+
+
+
+	//生成特定RGB值图片
+	void generateSpecificRGB(int r,int g,int b,int width,int height,String path)
+	{
+		BufferedImage bi = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
+		bi = paintTraverse(r,g,b,bi);
+
+		String pname = "rgb_"+r+String.valueOf(g)+b+".jpg";
+		writePic(bi,path,pname);
+	}
+
+
+
+	
+	//产生特定色域颜色差异图片
+	void diffTestPic(int num,int r,int g,int b,int width,int height,String path)//参数分别为差异屏幕编号，其他三块屏幕RGB
+	{
+		BufferedImage bi = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
+		bi = paintTraverse(r,g,b,bi);
+
+		
+		//配置差异属性
+		int diffw = (int)(width/2),diffh = (int)(height/2);
+		int diffr = r-20,diffg = g-20,diffb = b-20;
+		Color diffcolor = new Color(diffr,diffg,diffb);
+		//BufferedImage bi = new BufferedImage(diffw,diffh,BufferedImage.TYPE_INT_RGB);
+		if(num==1)
+		{
+			for(int i = 0;i<diffw;i++)
+			{
+				for(int j = 0;j<diffh;j++)
+				{
+					bi.setRGB(i,j,diffcolor.getRGB());
+				}
+			}
+		}
+		else if(num==2)
+		{
+			for(int i = diffw;i<width;i++)
+			{
+				for(int j = 0;j<diffh;j++)
+				{
+					bi.setRGB(i,j,diffcolor.getRGB());
+				}
+			}
+		}
+		else if(num==3)
+		{
+			for(int i = 0;i<diffw;i++)
+			{
+				for(int j = diffh;j<height;j++)
+				{
+					bi.setRGB(i,j,diffcolor.getRGB());
+				}
+			}
+		}
+		else if(num==4)
+		{
+			for(int i = diffw;i<width;i++)
+			{
+				for(int j = diffh;j<height;j++)
+				{
+					bi.setRGB(i,j,diffcolor.getRGB());
+				}
+			}
+		}
+
+
+		String pname = "diffpic_rgb_"+r+String.valueOf(g)+b+".jpg";//这里应该加上日期时间戳保证唯一性，但是以前笔记不知道放哪了，所以暂时放一放
+		writePic(bi,path,pname);
+	}
+
+
+
+
+	//批量产生特定色域颜色差异图片
+	void batDiffPic(int num,int width,int height,String path)
+	{
+		for(int i = 0;i<26;i++)
+		{
+			diffTestPic(num,i*10,i*10,i*10,width,height,path);
+		}
+	}
+}

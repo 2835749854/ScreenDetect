@@ -1,0 +1,155 @@
+import javax.swing.*;
+import java.util.Timer;
+import java.util.LinkedList;
+import java.util.TimerTask;
+import java.util.ListIterator;
+import java.io.*;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.Graphics;
+import java.awt.Canvas;
+class ImageSwitchCanvas extends Canvas
+{
+	double width = 0;
+	double height = 0;
+	int sizeImgs = 2;
+	int indexImg = 0;
+	boolean flag = true;
+	LinkedList<BufferedImage> imgAll = new LinkedList<BufferedImage>();
+	ListIterator<BufferedImage> imgIterator = null;
+	ImageSwitchCanvas(String path)
+	{
+		try 
+		{
+			//获取屏幕大小
+			Dimension screenSize   =   Toolkit.getDefaultToolkit().getScreenSize();
+			width = screenSize.getWidth();
+			height = screenSize.getHeight();
+			
+			//初始化文件夹中的所有图像
+			File file = new File(path);//根目录文件，path是文件目录，file是文件(夹)对象
+			if (file.isDirectory())//检查表示此抽象路径名的文件是否是一个目录 
+			{
+				File[] list = file.listFiles();//将文件(夹)对象中所有文件放到文件对象数组中
+				for (int i = 0; i < list.length; i++) 
+				{
+					if (list[i].isDirectory()==false) //
+					{
+						BufferedImage buffimg = ImageIO.read(list[i]);
+						imgAll.add(buffimg);
+					}
+					System.out.println("Find File:" + list[i].getName());
+				}
+				sizeImgs = imgAll.size();
+				imgIterator = imgAll.listIterator();
+				System.out.println("完成图片集的添加");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+
+
+
+	//定时添加图片至面板
+	/*void updateImg(ListIterator<BufferedImage> imgIterator)
+	{
+		//ListIterator<BufferedImage> imgIterator = allImg.listIterator();
+		BufferedImage img = imgIterator.next();
+		if(img!=null)
+		{
+			imageUpdate(img,JPanel.ALLBITS,0,0,(int)width,(int)height);
+			updateUI();
+		}
+		else
+		{
+			System.out.println("图像为空！");
+		}
+	}*/
+
+
+
+
+	//变换绘制背景图
+	@Override
+	public void paint(Graphics g)
+	{
+		try
+		{
+			if((flag==true)&&(indexImg<sizeImgs-1))
+			{
+				BufferedImage img = imgIterator.next();
+				indexImg++;
+				System.out.println(indexImg);
+		    	g.drawImage(img,0,0,(int)width,(int)height,this);
+			}
+			else if((flag==true)&&(indexImg==sizeImgs-1))
+			{
+				BufferedImage img = imgIterator.next();
+				flag = false;
+		    	g.drawImage(img,0,0,(int)width,(int)height,this);
+			}
+			else if((flag==false)&&(indexImg>0))
+			{
+				BufferedImage img = imgIterator.previous();
+				indexImg--;
+				System.out.println(indexImg);
+		    	g.drawImage(img,0,0,(int)width,(int)height,this);
+			}
+			else if((flag==false)&&(indexImg==0))
+			{
+				BufferedImage img = imgIterator.previous();
+				flag = true;
+		    	g.drawImage(img,0,0,(int)width,(int)height,this);
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+
+
+
+	@Override
+	public void update(Graphics g)
+	{
+		paint(g);
+	}
+
+
+
+
+	//启动定时任务
+	void startShootTask()
+	{
+		// 创建定时任务
+        TimerTask timerTask = new TimingShootTask();
+        //创建定时器对象
+        Timer timer = new Timer();
+        /**相当于新开一个线程去执行定时器任务
+         * 定时器执行定时器任务，1 秒后开始执行任务
+         * 任务执行完成后，间隔 3 秒再次执行，循环往复
+         */
+        timer.schedule(timerTask, 1000, 5000);
+	}
+
+
+
+
+	//定时任务
+	class TimingShootTask extends TimerTask
+	{
+		public void run()
+		{
+			//updateImg(imgIterator);
+			repaint();
+			System.out.println("完成一次更新");
+		}
+	}
+}

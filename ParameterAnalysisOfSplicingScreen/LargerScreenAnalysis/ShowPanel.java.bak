@@ -1,0 +1,25 @@
+class ShowPanel extends JPanel 
+{
+	HashMap<String,JPanel> showPanelSet = new HashMap<String,JPanel>();
+
+	ShowPanel()
+	{
+		showPanelSet.put("img",new ImagePanel());
+	}
+
+
+
+	
+	public void judgeShow()
+	{
+		boolean haveCa = showPanelSet.containsKey("camera");
+		if(haveCa==false)
+		{
+		    add(showPanelSet.get("img"));
+		}
+		else
+		{
+			add(showPanelSet.get("camera"));
+		}
+	}
+}

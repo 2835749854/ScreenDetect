@@ -1,0 +1,82 @@
+/**
+*自定义坐标系，接收横纵坐标并画出
+*
+*
+**/
+import javax.swing.JPanel;
+import java.awt.Graphics;
+import java.awt.Color;
+import java.util.*;
+class  CustomCoordinate extends JPanel
+{
+	String abscissa ="X轴",ordinate = "y轴";
+	int height = 100,width = 100;
+	ArrayList<Integer> data = null;
+
+
+
+	CustomCoordinate()
+	{
+		setSize(150,150);
+	}
+	
+	
+	
+	
+	//设置横纵坐标
+	void setCoordinate(String abscissa,String ordinate)
+	{
+		this.abscissa = abscissa;
+		this.ordinate = ordinate;
+	}
+
+	//设置坐标轴长
+	void setAxialLength(int width,int height)
+	{
+		this.width = width;
+		this.height = height;
+	}
+
+
+
+	public void paint(Graphics g)
+	{
+		g.clearRect(0,0,250,200);//必须使用背景色填充否则出现显示异常(暂时知识缺乏不知道具体原因)
+		//绘画坐标轴
+		g.drawLine(0,(int)(0.9*height),(int)(0.9*width),(int)(0.9*height));
+		g.drawString(abscissa,(int)width,(int)height);
+		g.drawLine((int)(0.1*width),(int)(0.1*height),(int)(0.1*width),height);
+		g.drawString(ordinate,(int)(0.2*width),(int)(0.2*height));
+
+		//绘画数据
+		judgeData(g,data);
+	}
+
+
+
+	void judgeData(Graphics g,ArrayList<Integer> data)
+	{
+		if(data==null)
+		{
+			//System.out.println("坐标初始化完成");
+		}
+		else
+		{
+			paintDate(g,data);
+			System.out.println("绘制数据。。。。");
+		}
+	}
+
+
+
+	void paintDate(Graphics g,ArrayList<Integer> data)
+	{
+		g.setColor(Color.red);
+		System.out.println("paintDate被调用，正在绘画。。。");
+		for(int i = 0;i<90;i++)
+		{
+			int j = (int)(data.get(i)/3);
+			g.fillOval(i+10,j,2,2);
+		}
+	}
+}
