@@ -6,23 +6,23 @@ import javax.imageio.ImageIO;
 import java.util.concurrent.*;
 
 /*
-*±¾ÀàµÄÈÎÎñÊÇ¼ÆËã£¬ÆäÖĞ°üº¬ÁË¿ÉÈİĞíµÄ×î´óÎó²îºÍÒ»Ğ©Ëã·¨
-*¼ÆËãÈÎÎñÓ¦µ±È«È¨½»ÓÉ±¾ÀàÍê³É
+*æœ¬ç±»çš„ä»»åŠ¡æ˜¯è®¡ç®—ï¼Œå…¶ä¸­åŒ…å«äº†å¯å®¹è®¸çš„æœ€å¤§è¯¯å·®å’Œä¸€äº›ç®—æ³• 
+*è®¡ç®—ä»»åŠ¡åº”å½“å…¨æƒäº¤ç”±æœ¬ç±»å®Œæˆ
 */
 public class CalcData {
-	public static final double MAX_SLOPE_THRESHOLD = 0.05,Max_RDIFFERENCE_THRESHOLD = 3;	//×î´óĞ±ÂÊ²îãĞÖµ,×î´ó°ë¾¶²îÏñËØãĞÖµ
-	ArrayList<Double> rarray = new ArrayList<Double>();		//±£´æÔ²µÄ°Ë¸ö·½Ïò°ë¾¶
+	public static final double MAX_SLOPE_THRESHOLD = 0.05,Max_RDIFFERENCE_THRESHOLD = 3;	//æœ€å¤§æ–œç‡å·®é˜ˆå€¼,æœ€å¤§åŠå¾„å·®åƒç´ é˜ˆå€¼
+	ArrayList<Double> rarray = new ArrayList<Double>();		//ä¿å­˜åœ†çš„å…«ä¸ªæ–¹å‘åŠå¾„
 	
 	/*
-	*ÏÂÃæ·½·¨ÓÃÓÚ¼ÆËãĞ±ÂÊ£¬¶ÁÈ¡Ò»ÕÅ¶şÖµ»¯µÄÍ¼²¢Ë«Ïò²éÕÒÖ±ÏßµÄÆğµãºÍÖÕµã£¬
-	*È»ºóÓÃÆğµãºÍÖÕµã¼ÆËãĞ±ÂÊ£¬ÕâÀïÊäÈëµÄ¶şÖµ»¯Í¼¿ÉÒÔ²»ÊÇºÚ°×£¬Ö»ÒªÊÇË«É«Í¼Æ¬£¨Èçºì°×£¬ºìÀ¶£©¶¼ÄÜ¼ÆËã³ö¶ÔÓ¦µÄÆğµãºÍÖÕµã
+	*ä¸‹é¢æ–¹æ³•ç”¨äºè®¡ç®—æ–œç‡ï¼Œè¯»å–ä¸€å¼ äºŒå€¼åŒ–çš„å›¾å¹¶åŒå‘æŸ¥æ‰¾ç›´çº¿çš„èµ·ç‚¹å’Œç»ˆç‚¹ï¼Œ
+	*ç„¶åç”¨èµ·ç‚¹å’Œç»ˆç‚¹è®¡ç®—æ–œç‡ï¼Œè¿™é‡Œè¾“å…¥çš„äºŒå€¼åŒ–å›¾å¯ä»¥ä¸æ˜¯é»‘ç™½ï¼Œåªè¦æ˜¯åŒè‰²å›¾ç‰‡ï¼ˆå¦‚çº¢ç™½ï¼Œçº¢è“ï¼‰éƒ½èƒ½è®¡ç®—å‡ºå¯¹åº”çš„èµ·ç‚¹å’Œç»ˆç‚¹
 	*/
-	public double calcSlope(String filepath){		//¼ÆËãĞ±ÂÊ£¬²ÎÊıÊÇÍ¼Æ¬µÄÂ·¾¶
+	public double calcSlope(String filepath){		//è®¡ç®—æ–œç‡ï¼Œå‚æ•°æ˜¯å›¾ç‰‡çš„è·¯å¾„
 		double k = 0.0;
 		BufferedImage bi = null;
 		int []rgb = new int[3];
 		int xstart = 0,ystart = 0,xend = 0,yend = 0;
-		boolean hadFirst = false,hadEnd = false;		//£¬¼ÇÂ¼ÊÇ·ñÕÒµ½µÚÒ»¸öµãºÍ×îºóÒ»¸öµã
+		boolean hadFirst = false,hadEnd = false;		//ï¼Œè®°å½•æ˜¯å¦æ‰¾åˆ°ç¬¬ä¸€ä¸ªç‚¹å’Œæœ€åä¸€ä¸ªç‚¹
 		File file = new File(filepath);
 		try{
 			bi = ImageIO.read(file);
@@ -35,34 +35,34 @@ public class CalcData {
 		int miny = bi.getMinY();
 		for(int j = miny;j<height;j++){
 			for(int i = minx;i<width-1;i++){
-				int pixel = bi.getRGB(i,j);			//ÕıÏò¶ÁÈ¡Í¼Æ¬RGB
+				int pixel = bi.getRGB(i,j);			//æ­£å‘è¯»å–å›¾ç‰‡RGB
 				int pixel_2 = bi.getRGB(i+1,j);
-				if(pixel!=pixel_2&&!hadFirst){		//Èç¹ûRGB·¢Éú¸Ä±ä£¬ÇÒÉĞÇÒ»¹Ã»ÕÒµ½µÚÒ»¸öµã£¬ÄÇÃ´RGB·¢Éú¸Ä±äµÄµã×÷ÎªÆğµã
+				if(pixel!=pixel_2&&!hadFirst){		//å¦‚æœRGBå‘ç”Ÿæ”¹å˜ï¼Œä¸”å°šä¸”è¿˜æ²¡æ‰¾åˆ°ç¬¬ä¸€ä¸ªç‚¹ï¼Œé‚£ä¹ˆRGBå‘ç”Ÿæ”¹å˜çš„ç‚¹ä½œä¸ºèµ·ç‚¹
 					xstart = i;ystart = j;
 					hadFirst = true;
 					System.out.println(xstart+"  "+ystart);
 				}
-				int pixel_3 = bi.getRGB(i,height-j-1);	//·´Ïò¶ÁÈ¡Í¼Æ¬RGB
+				int pixel_3 = bi.getRGB(i,height-j-1);	//åå‘è¯»å–å›¾ç‰‡RGB
 				int pixel_4 = bi.getRGB(i+1,height-j-1);
-				if(pixel_3!=pixel_4&&!hadEnd){		//Èç¹ûRGB·¢Éú¸Ä±ä£¬ÇÒÉĞÇÒ»¹Ã»ÕÒµ½ÖÕµã£¬ÄÇÃ´RGB·¢Éú¸Ä±äµÄµã×÷ÎªÖÕµã
+				if(pixel_3!=pixel_4&&!hadEnd){		//å¦‚æœRGBå‘ç”Ÿæ”¹å˜ï¼Œä¸”å°šä¸”è¿˜æ²¡æ‰¾åˆ°ç»ˆç‚¹ï¼Œé‚£ä¹ˆRGBå‘ç”Ÿæ”¹å˜çš„ç‚¹ä½œä¸ºç»ˆç‚¹
 					xend = i;yend = height-j-1;
 					hadEnd = true;
 					System.out.println(xend+"   "+yend);	
 				}
-				if(hadFirst&&hadEnd)		//ÈôÆğµãºÍÖÕµãÒÑ¾­È«²¿ÕÒµ½£¬Ê£ÏÂµÄRGB¼´¿É²»ÓÃ¼ÆËã£¬Ö±½ÓÌø³öÑ­»·
+				if(hadFirst&&hadEnd)		//è‹¥èµ·ç‚¹å’Œç»ˆç‚¹å·²ç»å…¨éƒ¨æ‰¾åˆ°ï¼Œå‰©ä¸‹çš„RGBå³å¯ä¸ç”¨è®¡ç®—ï¼Œç›´æ¥è·³å‡ºå¾ªç¯
 					break;
 			}
 		}
-		k = (double)(ystart-yend)/(xstart-xend);	//¼ÆËãĞ±ÂÊ
+		k = (double)(ystart-yend)/(xstart-xend);	//è®¡ç®—æ–œç‡
 		return k;
 	}
 	
 	/*
-	*´Ë·½·¨ÊÇÉÏÃæ·½·¨µÄ²»Í¬²ÎÊı°æ±¾£¬Ô­ÀíÏàÍ¬
-	*´«ÈëµÄÊÇÒ»ÕÅÒÑ·ÅÈë»º´æµÄÍ¼Æ¬£¬
-	*½ÏÉÏÃæµÄ·½·¨µÄÓÅµãÊÇ£¬¿ÉÒÔ¶ÔÍ¼Æ¬½øĞĞÒ»¶¨´¦ÀíºóÔÙ¼ÆËãĞ±ÂÊ
+	*æ­¤æ–¹æ³•æ˜¯ä¸Šé¢æ–¹æ³•çš„ä¸åŒå‚æ•°ç‰ˆæœ¬ï¼ŒåŸç†ç›¸åŒ
+	*ä¼ å…¥çš„æ˜¯ä¸€å¼ å·²æ”¾å…¥ç¼“å­˜çš„å›¾ç‰‡ï¼Œ
+	*è¾ƒä¸Šé¢çš„æ–¹æ³•çš„ä¼˜ç‚¹æ˜¯ï¼Œå¯ä»¥å¯¹å›¾ç‰‡è¿›è¡Œä¸€å®šå¤„ç†åå†è®¡ç®—æ–œç‡
 	*/
-	public double calcSlope(BufferedImage bi){	//¼ÆËãĞ±ÂÊ£¬²ÎÊıÊÇÒÑ·ÅÈë»º´æµÄÍ¼Æ¬
+	public double calcSlope(BufferedImage bi){	//è®¡ç®—æ–œç‡ï¼Œå‚æ•°æ˜¯å·²æ”¾å…¥ç¼“å­˜çš„å›¾ç‰‡
 		double k = 0.0;
 		int []rgb = new int[3];
 		int xstart = 0,ystart = 0,xend = 0,yend = 0;
@@ -95,13 +95,13 @@ public class CalcData {
 		return k;
 	}
 
-	public double calcRDiff(String filepath){		//¼ÆËãÔ²ĞÄµ½±ßÔµ×î³¤°ë¾¶ºÍ×î¶Ì°ë¾¶Ö®²î£¬²ÎÊıÎªÍ¼Æ¬µØÖ·
+	public double calcRDiff(String filepath){		//è®¡ç®—åœ†å¿ƒåˆ°è¾¹ç¼˜æœ€é•¿åŠå¾„å’Œæœ€çŸ­åŠå¾„ä¹‹å·®ï¼Œå‚æ•°ä¸ºå›¾ç‰‡åœ°å€
 		BufferedImage bi = null;
 		int []rgb = new int[3];
 		int xstart = 0,ystart = 0,xend = 0,yend = 0;
 		double xcenter = 0,ycenter = 0;
 		boolean hadFirst = false,hadEnd = false;
-		ExecutorService executor = Executors.newCachedThreadPool();		//Ö´ĞĞÆ÷£¬ÎªÎÒÃÇÍĞ¹ÜÏß³Ì
+		ExecutorService executor = Executors.newCachedThreadPool();		//æ‰§è¡Œå™¨ï¼Œä¸ºæˆ‘ä»¬æ‰˜ç®¡çº¿ç¨‹
 		File file = new File(filepath);
 		try{
 			bi = ImageIO.read(file);
@@ -112,7 +112,7 @@ public class CalcData {
 		int height = bi.getHeight();							
 		int minx = bi.getMinX();
 		int miny = bi.getMinY();
-		for(int j = miny;j<height;j++){		//°´ĞĞÉ¨Ãè£¬Ñ°ÕÒÆğµã×İ×ø±ê£¬È·¶¨Ô²ËùÔÚµÄ×İ×ø±ê·¶Î§
+		for(int j = miny;j<height;j++){		//æŒ‰è¡Œæ‰«æï¼Œå¯»æ‰¾èµ·ç‚¹çºµåæ ‡ï¼Œç¡®å®šåœ†æ‰€åœ¨çš„çºµåæ ‡èŒƒå›´
 			for(int i = minx;i<width-1;i++){
 				int pixel = bi.getRGB(i,j);
 				int pixel_2 = bi.getRGB(i+1,j);
@@ -123,7 +123,7 @@ public class CalcData {
 				int pixel_3 = bi.getRGB(i,height-j-1);
 				int pixel_4 = bi.getRGB(i+1,height-j-1);
 				if(pixel_3!=pixel_4&&!hadEnd){
-					yend = height-j-1;		//ÄæÏò°´ĞĞÉ¨Ãè£¬Ñ°ÕÒÖÕµãµã×İ×ø±ê
+					yend = height-j-1;		//é€†å‘æŒ‰è¡Œæ‰«æï¼Œå¯»æ‰¾ç»ˆç‚¹ç‚¹çºµåæ ‡
 					hadEnd = true;
 				}
 				if(hadFirst&&hadEnd)
@@ -135,14 +135,14 @@ public class CalcData {
 			for(int j = miny;j<height-1;j++){
 				int pixel = bi.getRGB(i,j);
 				int pixel_2 = bi.getRGB(i,j+1);
-				if(pixel!=pixel_2&&!hadFirst){	//Ô²µÄÆğµãºá×ø±ê
+				if(pixel!=pixel_2&&!hadFirst){	//åœ†çš„èµ·ç‚¹æ¨ªåæ ‡
 					xstart = i;
 					hadFirst = true;
 				}
 				int pixel_3 = bi.getRGB(width-i-1,j);
 				int pixel_4 = bi.getRGB(width-i-1,j+1);
 				if(pixel_3!=pixel_4&&!hadEnd){
-					xend = width-i-1;		//ÄæÏò°´ĞĞÉ¨Ãè£¬Ñ°ÕÒÖÕµãµãºá×ø±ê
+					xend = width-i-1;		//é€†å‘æŒ‰è¡Œæ‰«æï¼Œå¯»æ‰¾ç»ˆç‚¹ç‚¹æ¨ªåæ ‡
 					hadEnd = true;
 				}
 				if(hadFirst&&hadEnd)
@@ -150,11 +150,11 @@ public class CalcData {
 			}
 		}
 		System.out.println(xstart+","+ystart+"  "+xend+","+yend);
-		xcenter = (double)(xstart+xend)/2;			//¼ÆËã³öÔ²ĞÄÎ»ÖÃ
+		xcenter = (double)(xstart+xend)/2;			//è®¡ç®—å‡ºåœ†å¿ƒä½ç½®
 		ycenter = (double)(ystart+yend)/2;
 		System.out.println(xcenter+","+ycenter);
 		try{
-			rarray.add(executor.submit(new CalR(bi,CalR.L,xcenter,ycenter)).get());	//¿ª°Ë¸öÏß³Ì¼ÆËãÔ²ĞÄµ½±ßÔµµÄ¾àÀë£¬²¢½«¼ÆËã³öµÄ¾àÀë·ÅÈëË³Ğò±í
+			rarray.add(executor.submit(new CalR(bi,CalR.L,xcenter,ycenter)).get());	//å¼€å…«ä¸ªçº¿ç¨‹è®¡ç®—åœ†å¿ƒåˆ°è¾¹ç¼˜çš„è·ç¦»ï¼Œå¹¶å°†è®¡ç®—å‡ºçš„è·ç¦»æ”¾å…¥é¡ºåºè¡¨
 			rarray.add(executor.submit(new CalR(bi,CalR.LU,xcenter,ycenter)).get());
 			rarray.add(executor.submit(new CalR(bi,CalR.U,xcenter,ycenter)).get());
 			rarray.add(executor.submit(new CalR(bi,CalR.RU,xcenter,ycenter)).get());
@@ -162,19 +162,19 @@ public class CalcData {
 			rarray.add(executor.submit(new CalR(bi,CalR.RD,xcenter,ycenter)).get());
 			rarray.add(executor.submit(new CalR(bi,CalR.D,xcenter,ycenter)).get());
 			rarray.add(executor.submit(new CalR(bi,CalR.LD,xcenter,ycenter)).get());
-			for(double i :rarray)	//´òÓ¡²é¿´°ë¾¶
+			for(double i :rarray)	//æ‰“å°æŸ¥çœ‹åŠå¾„
 				System.out.println(i);
-			System.out.println("MaxValue:  "+getMaxValue(rarray));	//´òÓ¡²é¿´×î´óÖµºÍ×îĞ¡Öµ
+			System.out.println("MaxValue:  "+getMaxValue(rarray));	//æ‰“å°æŸ¥çœ‹æœ€å¤§å€¼å’Œæœ€å°å€¼
 			System.out.println("MinValue:  "+getMinValue(rarray));
 		}catch(Exception e){
 			e.printStackTrace(System.out);
 		}
 		executor.shutdown();
 		
-		return (getMaxValue(rarray)-getMinValue(rarray));	//·µ»Ø×î´ó°ë¾¶ºÍ×îĞ¡°ë¾¶µÄ²îÖµ
+		return (getMaxValue(rarray)-getMinValue(rarray));	//è¿”å›æœ€å¤§åŠå¾„å’Œæœ€å°åŠå¾„çš„å·®å€¼
 	}
 
-	public double calcRDiff(BufferedImage bi){		//¼ÆËãÔ²ĞÄµ½±ßÔµ×î³¤°ë¾¶ºÍ×î¶Ì°ë¾¶Ö®²î£¬²ÎÊıÎªÒÑ·ÅÈë»º´æµÄÍ¼Æ¬
+	public double calcRDiff(BufferedImage bi){		//è®¡ç®—åœ†å¿ƒåˆ°è¾¹ç¼˜æœ€é•¿åŠå¾„å’Œæœ€çŸ­åŠå¾„ä¹‹å·®ï¼Œå‚æ•°ä¸ºå·²æ”¾å…¥ç¼“å­˜çš„å›¾ç‰‡
 		int xstart = 0,ystart = 0,xend = 0,yend = 0;
 		double xcenter = 0,ycenter = 0;
 		boolean hadFirst = false,hadEnd = false;
@@ -183,7 +183,7 @@ public class CalcData {
 		int height = bi.getHeight();							
 		int minx = bi.getMinX();
 		int miny = bi.getMinY();
-		for(int j = miny;j<height;j++){		//°´ĞĞÉ¨Ãè£¬Ñ°ÕÒÆğµã×İ×ø±ê£¬È·¶¨Ô²ËùÔÚµÄ×İ×ø±ê·¶Î§
+		for(int j = miny;j<height;j++){		//æŒ‰è¡Œæ‰«æï¼Œå¯»æ‰¾èµ·ç‚¹çºµåæ ‡ï¼Œç¡®å®šåœ†æ‰€åœ¨çš„çºµåæ ‡èŒƒå›´
 			for(int i = minx;i<width-1;i++){
 				int pixel = bi.getRGB(i,j);
 				int pixel_2 = bi.getRGB(i+1,j);
@@ -194,7 +194,7 @@ public class CalcData {
 				int pixel_3 = bi.getRGB(i,height-j-1);
 				int pixel_4 = bi.getRGB(i+1,height-j-1);
 				if(pixel_3!=pixel_4&&!hadEnd){
-					yend = height-j-1;		//ÄæÏò°´ĞĞÉ¨Ãè£¬Ñ°ÕÒÖÕµãµã×İ×ø±ê
+					yend = height-j-1;		//é€†å‘æŒ‰è¡Œæ‰«æï¼Œå¯»æ‰¾ç»ˆç‚¹ç‚¹çºµåæ ‡
 					hadEnd = true;
 				}
 				if(hadFirst&&hadEnd)
@@ -213,7 +213,7 @@ public class CalcData {
 				int pixel_3 = bi.getRGB(width-i-1,j);
 				int pixel_4 = bi.getRGB(width-i-1,j+1);
 				if(pixel_3!=pixel_4&&!hadEnd){
-					xend = width-i-1;		//ÄæÏò°´ĞĞÉ¨Ãè£¬Ñ°ÕÒÖÕµãµã×İ×ø±ê
+					xend = width-i-1;		//é€†å‘æŒ‰è¡Œæ‰«æï¼Œå¯»æ‰¾ç»ˆç‚¹ç‚¹çºµåæ ‡
 					hadEnd = true;
 				}
 				if(hadFirst&&hadEnd)
@@ -225,7 +225,7 @@ public class CalcData {
 		ycenter = (double)(ystart+yend)/2;
 		System.out.println(xcenter+","+ycenter);
 		try{
-			rarray.add(executor.submit(new CalR(bi,CalR.L,xcenter,ycenter)).get());		//½«¸÷¸ö·½ÏòµÄ°ë¾¶·ÅÈëË³Ğò±í
+			rarray.add(executor.submit(new CalR(bi,CalR.L,xcenter,ycenter)).get());		//å°†å„ä¸ªæ–¹å‘çš„åŠå¾„æ”¾å…¥é¡ºåºè¡¨
 			rarray.add(executor.submit(new CalR(bi,CalR.LU,xcenter,ycenter)).get());	
 			rarray.add(executor.submit(new CalR(bi,CalR.U,xcenter,ycenter)).get());
 			rarray.add(executor.submit(new CalR(bi,CalR.RU,xcenter,ycenter)).get());
@@ -245,7 +245,7 @@ public class CalcData {
 		return (getMaxValue(rarray)-getMinValue(rarray));
 	}
 	
-	public double getMaxValue(ArrayList<Double> array){		//¼ÆËã»ñÈ¡Ë³Ğò±íÖĞ×î´óµÄÖµ
+	public double getMaxValue(ArrayList<Double> array){		//è®¡ç®—è·å–é¡ºåºè¡¨ä¸­æœ€å¤§çš„å€¼
 		double value = array.get(0);
 		for(int i = 0;i<array.size();i++){
 			if(value<array.get(i))
@@ -254,7 +254,7 @@ public class CalcData {
 		return value;
 	}
 
-	public double getMinValue(ArrayList<Double> array){		//¼ÆËã»ñÈ¡Ë³Ğò±íÖĞ×îĞ¡µÄÖµ
+	public double getMinValue(ArrayList<Double> array){		//è®¡ç®—è·å–é¡ºåºè¡¨ä¸­æœ€å°çš„å€¼
 		double value = array.get(0);
 		for(int i = 0;i<array.size();i++){
 			if(value>array.get(i))
@@ -263,22 +263,22 @@ public class CalcData {
 		return value;
 	}
 
-	public static void main(String[] args){		//²âÊÔÓÃ
+	public static void main(String[] args){		//æµ‹è¯•ç”¨
 		CalcData cd = new CalcData();
-		//System.out.println(cd.calcSlope("G:/java/ÏîÄ¿/27.ÆÁÄ»ÖÊÁ¿¼ì²â/src/1.png"));
+		//System.out.println(cd.calcSlope("G:/java/é¡¹ç›®/27.å±å¹•è´¨é‡æ£€æµ‹/src/1.png"));
 		cd. calcRDiff("src/circle.png");
 	}
 	
 	/*
-	*ÏÂÃæµÄÏß³ÌÓÃÓÚ¼ÆËãÔ²ĞÄµ½±ßÔµµÄ¾àÀë
-	*Ò»¸öÏß³ÌÖ»¿É¼ÆËãÒ»¸ö·½ÏòµÄ¾àÀë
+	*ä¸‹é¢çš„çº¿ç¨‹ç”¨äºè®¡ç®—åœ†å¿ƒåˆ°è¾¹ç¼˜çš„è·ç¦»
+	*ä¸€ä¸ªçº¿ç¨‹åªå¯è®¡ç®—ä¸€ä¸ªæ–¹å‘çš„è·ç¦»
 	*/
-	class CalR implements Callable<Double>{	//¼ÆËãÔ²¸÷¸ö·½ÏòµÄ°ë¾¶
+	class CalR implements Callable<Double>{	//è®¡ç®—åœ†å„ä¸ªæ–¹å‘çš„åŠå¾„
 		BufferedImage bi;
-		final static int L = 1,LU = 2,U = 3,RU = 4, R = 5,RD = 6, D = 7, LD = 8; //L×ó£¬RÓÒ£¬UÉÏ£¬DÏÂ£¬¸ù¾İÖ¸Ïò·½ÏòÈ·¶¨²½½ø
-		int mode;	//²½½ø·½Ïò
+		final static int L = 1,LU = 2,U = 3,RU = 4, R = 5,RD = 6, D = 7, LD = 8; //Lå·¦ï¼ŒRå³ï¼ŒUä¸Šï¼ŒDä¸‹ï¼Œæ ¹æ®æŒ‡å‘æ–¹å‘ç¡®å®šæ­¥è¿›
+		int mode;	//æ­¥è¿›æ–¹å‘
 		double xcenter,ycenter;
-		CalR(BufferedImage input,int direction,double inputx,double inputy){	//²ÎÊıÎªÍ¼Æ¬£¬²½½ø·½Ïò£¬²½½øÆğµã
+		CalR(BufferedImage input,int direction,double inputx,double inputy){	//å‚æ•°ä¸ºå›¾ç‰‡ï¼Œæ­¥è¿›æ–¹å‘ï¼Œæ­¥è¿›èµ·ç‚¹
 			bi = input;
 			mode = direction;
 			xcenter = inputx;
@@ -287,9 +287,9 @@ public class CalcData {
 
 		@Override
 		public Double call(){
-			int xstep = 1,ystep = 1;  //XºÍYµÄ²½½ø£¬Ä¬ÈÏÏòÓÒÏÂ½Ç²½½ø
-			int xmove = 0,ymove = 0;	//xºÍyËù²úÉúµÄÎ»ÒÆ
-			double radius = 0;  //°ë¾¶
+			int xstep = 1,ystep = 1;  //Xå’ŒYçš„æ­¥è¿›ï¼Œé»˜è®¤å‘å³ä¸‹è§’æ­¥è¿›
+			int xmove = 0,ymove = 0;	//xå’Œyæ‰€äº§ç”Ÿçš„ä½ç§»
+			double radius = 0;  //åŠå¾„
 			switch(mode){			
 				case L:
 					xstep = -1;
@@ -330,21 +330,21 @@ public class CalcData {
 			int height = bi.getHeight();							
 			int minx = bi.getMinX();
 			int miny = bi.getMinY();
-			int curx = (int)xcenter;			//curxºÍcury±íÊ¾µ±Ç°²½½øµÄÎ»ÖÃ,²½½øÆğµã²»¸Ä±ä
+			int curx = (int)xcenter;			//curxå’Œcuryè¡¨ç¤ºå½“å‰æ­¥è¿›çš„ä½ç½®,æ­¥è¿›èµ·ç‚¹ä¸æ”¹å˜
 			int cury = (int)ycenter;
-			while(curx>=minx&&curx<width&&cury>=miny&&cury<height){		//²½½øÆğµã¿ØÖÆÔÚÔ²ÖĞ
-				int pixel = bi.getRGB(curx,cury);	//¼ÇÂ¼²½½ø¿ªÊ¼Ç°µÄRGBÖµ
-				curx+=xstep;		//¿ªÊ¼²½½ø
+			while(curx>=minx&&curx<width&&cury>=miny&&cury<height){		//æ­¥è¿›èµ·ç‚¹æ§åˆ¶åœ¨åœ†ä¸­
+				int pixel = bi.getRGB(curx,cury);	//è®°å½•æ­¥è¿›å¼€å§‹å‰çš„RGBå€¼
+				curx+=xstep;		//å¼€å§‹æ­¥è¿›
 				cury+=ystep;
-				int pixel_2 = bi.getRGB(curx,cury); //¼ÇÂ¼ĞÂµ½´ï×ø±êµÄRGBÖµ
+				int pixel_2 = bi.getRGB(curx,cury); //è®°å½•æ–°åˆ°è¾¾åæ ‡çš„RGBå€¼
 				if(pixel!=pixel_2)
 					break;			
 			}
-			curx-=xstep;	//Î»ÖÃ²¹Õı£¬Ñ­»·Ìø³öµÄÎ»ÖÃÊÇÔ²µÄ±ßÔµ£¬
-			curx-=ystep;	//²»×÷²¹Õı¶Ô½á¹û²¢ÎŞÓ°Ïì
+			curx-=xstep;	//ä½ç½®è¡¥æ­£ï¼Œå¾ªç¯è·³å‡ºçš„ä½ç½®æ˜¯åœ†çš„è¾¹ç¼˜ï¼Œ
+			curx-=ystep;	//ä¸ä½œè¡¥æ­£å¯¹ç»“æœå¹¶æ— å½±å“
 			//System.out.println(xmove+"   "+ymove);
-			radius = Math.sqrt((double)((curx-xcenter)*(curx-xcenter)+(cury-ycenter)*(cury-ycenter)));	//¾àÀë¼ÆËã¹«Ê½
-			//System.out.println("²âÊÔ "+((double)curx-xcenter));
+			radius = Math.sqrt((double)((curx-xcenter)*(curx-xcenter)+(cury-ycenter)*(cury-ycenter)));	//è·ç¦»è®¡ç®—å…¬å¼
+			//System.out.println("æµ‹è¯• "+((double)curx-xcenter));
 			return radius;
 		}
 	}
